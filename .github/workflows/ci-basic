@@ -1,0 +1,30 @@
+name: CI-Basic
+
+# 🔑 on: триггеры запуска
+on:
+  push:
+    branches: [ main ]        # Запускать только при пуше в main
+  pull_request:
+    branches: [ main ]        # И при создании PR в main
+
+# 🔑 jobs: набор задач, выполняемых параллельно или последовательно
+jobs:
+  # 🔑 lint: имя первой задачи (может быть любым)
+  lint:
+    # 🔑 runs-on: на какой машине выполнять (облачный раннер GitHub)
+    runs-on: ubuntu-latest
+    
+    # 🔑 steps: последовательность действий внутри задачи
+    steps:
+      # 🔑 uses: взять готовый экшен из Marketplace
+      - name: Checkout code          # ← Название шага (видно в логах)
+        uses: actions/checkout@v4    # ← Официальный экшен для клонирования репо
+      
+      # 🔑 run: выполнить команду в shell (bash по умолчанию на Linux)
+      - name: Run shellcheck
+        run: |                       # ← | = многострочный блок
+          echo "🔍 Проверяем скрипты..."
+          # Устанавливаем линтер (только для этого запуска)
+          sudo apt-get update && sudo apt-get install -y shellcheck
+          # Проверяем все .sh файлы в папке scripts/
+          shellcheck scripts/*.sh || echo "⚠️ Предупреждения, но не блокируем"
